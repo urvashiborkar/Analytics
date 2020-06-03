@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" href="https://jqueryvalidation.org/files/demo/site-demos.css"> -->
+    <script src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <!-- <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.0/jquery.validate.min.js"></script> -->
+      <!-- <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.0/additional-methods.min.js"></script> -->
+
+    <title>Log in</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style type="text/css">
+      span{
+        color: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="center">
+    <h1>Login</h1>
+    <form id="myform" action ="javascript:void(0)">
+        <div class="txt_field">
+        <input name="email" id="email" type="email" value="test@gmail.com" required>
+        <span id="emailerror"></span>
+        <label>Email</label>
+       </div>
+       <div class="txt_field">
+       <input name="password" id="password" min="1" max="6" type="password" required>
+       <span id="passworderror"></span>
+       <label>Password</label>
+           <!-- <span>Enter a password of at least 6 characters</span> -->
+        </div>
+        <div class="pass">Forgot Password?</div>
+        <button type="submit" id="Save">Login</button>
+        <div class="signup_link">
+        <p>Not a member? <a href="#">Signup</a></p>
+        </div>
+        </form>
+        </div>
+
+<!-- integrate api -->
+<script>
+// $(document).ready(function () {
+//   $("#myform").validate({
+//     rules: {
+//       'password': {
+//         minlength: 6
+//       }
+//     }
+//   });
+// });
+function showerror(err = ""){
+  if(err){
+    alert(err);
+  }else{
+    alert("user not found");
+  }
+
+}
+  function sendrequest(email,pass){
+      var arr = {email:email,password:pass};
+
+                 $.ajax({
+                    type: 'POST',
+                    url:  "https://wanderer-server.herokuapp.com/api/users/login",
+                    data: JSON.stringify(arr),
+                    contentType:'application/json; charset=utf-8',
+                    dataType:"json",
+                    async: false,
+                    success: function(val) {
+                    //console.log(val);
+                      if(typeof val.token !== 'undefined'){
+                        window.location = "welcome.html";
+                      }else{
+                        showerror();
+                      }
+                    },
+                    error: function(error) {
+                      console.log(error);
+                      if(typeof error.responseText !== 'undefined'){
+                        showerror(error.responseText);
+                      }else if(typeof error.statusText !== 'undefined'){
+                        showerror(error.statusText);
+                      }
+                      else {
+                        showerror()
+                      }
+
+
+                    }
+                });
+        }
+
+   $("#Save").click(function () {
+    var em = $("#email").val();
+    var pass = $("#password").val();
+
+    if(!em){
+      $('#emailerror').html('Email required');
+      return false;
+    }else if(!pass){
+      $('#passworderror').html('Please enter at least 6 characters.');
+      return false;
+    }else{
+      sendrequest(em,pass);
+    }
+
+   });
+
+    </script>
+  </body>
+</html>
