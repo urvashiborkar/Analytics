@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style media="screen">
+      body{
+        margin: 2%;
+      }
+    </style>
+    <title></title>
+
+  </head>
+  <body>
+    <div class="container">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="user_data">
+          <tr>
+            <!-- <th>check</th> -->
+			<th></th>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Info button</th>
+          </tr>
+        </table>
+
+      </div>
+
+	  <button type="button" onclick = "onsubmitchecked()"  class="btn btn-info btn-sm">SAVE</button>
+
+	  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          Name : <span id = "name"></span> <br>
+		  Username : <span id = "username"></span> <br>
+		  Email : <span id = "email"></span>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-small" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+    </div>
+  </body>
+  <script type="text/javascript">
+    $(document).ready(function(){
+        $.getJSON("https://jsonplaceholder.typicode.com/users" ,function(data){
+
+          var userData = '';
+          $.each(data, function(key, value){
+            userData += '<tr>';
+            userData += '<td><input class = "cu_id" type = "checkbox" value="'+value.id+'" ></td>';
+            userData += '<td>'+value.name+'</td>';
+            userData += '<td>'+value.username+'</td>';
+            userData += '<td>'+value.email+'</td>';
+			      userData += '<td><a value="'+value.id+'" onclick = "addUserDetails('+value.id+')"  data-toggle="modal" data-target="#myModal" >Details</a></td>';
+            userData += '</tr>';
+          });
+
+          $('#user_data').append(userData);
+        });
+    });
+
+	function getUserDetails(id){
+		var url = "https://jsonplaceholder.typicode.com/users/"+id;
+		$.getJSON(url,function(data){
+			//var udata = JSON.stringify(data);
+			console.log(data);
+        });
+	}
+
+	function addUserDetails(id){
+
+		var url = "https://jsonplaceholder.typicode.com/users/"+id;
+		$.getJSON(url,function(data){
+			$("#name").html(data.name);
+			$("#username").html(data.username);
+			$("#email").html(data.email);
+
+
+        });
+
+	}
+
+	function onsubmitchecked(){
+		$('input.cu_id:checkbox:checked').each(function () {
+			var sThisVal = $(this).val();
+      console.log(sThisVal);
+			userData = getUserDetails(sThisVal);
+
+		});
+	}
+  </script>
+</html>
